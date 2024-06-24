@@ -57,6 +57,7 @@ class GHAapp < Sinatra::Application
       if @payload['action'] == 'requested' || @payload['action'] == 'rerequested'
         create_check_run
       end
+      
       # ADD CHECK_RUN METHOD HERE #
     end
 
