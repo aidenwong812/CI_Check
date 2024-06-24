@@ -6,6 +6,7 @@ require 'openssl'       # Verifies the webhook signature
 require 'jwt'           # Authenticates a GitHub App
 require 'time'          # Gets ISO 8601 representation of a Time object
 require 'logger'        # Logs debug statements
+require 'git'
 
 # This code is a Sinatra app, for two reasons:
 #   1. Because the app will require a landing page for installation.
@@ -106,6 +107,19 @@ class GHAapp < Sinatra::Application
       )
 
       # ***** RUN A CI TEST *****
+      full_repo_name = @payload['repository']['full_name']
+      repository     = @payload['repository']['name']
+      head_sha       = @payload['check_run']['head_sha']
+
+      clone_repository(full_repo_name, repository, head_sha)
+
+      # Run RuboCop on all files in the repository
+      @report = `rubocop '#{repository}' --format json`
+      logger.debug @report
+      `rm -rf #{repository}`
+      @output = JSON.parse @report
+
+      # ADD ANNOTATIONS CODE HERE #
 
       # Mark the check run as complete!
       @installation_client.update_check_run(
@@ -118,7 +132,20 @@ class GHAapp < Sinatra::Application
 
     end
 
-    # ADD CLONE_REPOSITORY HELPER METHOD HERE #
+    # Clones the repository to the current working directory, updates the
+    # contents using Git pull, and checks out the ref.
+    #
+    # full_repo_name  - The owner and repo. Ex: octocat/hello-world
+    # repository      - The repository name
+    # ref             - The branch, commit SHA, or tag to check out
+    def clone_repository(full_repo_name, repository, ref)
+      @git = Git.clone("https://x-access-token:#{@installation_token.to_s}@github.com/#{full_repo_name}.git", repository)
+      pwd = Dir.getwd()
+      Dir.chdir(repository)
+      @git.pull
+      @git.checkout(ref)
+      Dir.chdir(pwd)
+    end
 
     # ADD TAKE_REQUESTED_ACTION HELPER METHOD HERE #
 
