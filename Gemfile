@@ -7,3 +7,4 @@ gem 'puma'
 gem 'rubocop'
 gem 'dotenv'
 gem 'git'
+gem "faraday-retry", "~> 2.2"

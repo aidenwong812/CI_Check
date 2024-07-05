@@ -6,6 +6,7 @@ require 'openssl'       # Verifies the webhook signature
 require 'jwt'           # Authenticates a GitHub App
 require 'time'          # Gets ISO 8601 representation of a Time object
 require 'logger'        # Logs debug statements
+require 'git'
 
 # This code is a Sinatra app, for two reasons:
 #   1. Because the app will require a landing page for installation.
@@ -84,7 +85,7 @@ class GHAapp < Sinatra::Application
         # [String, Integer, Hash, Octokit Repository object] A GitHub repository.
         @payload['repository']['full_name'],
         # [String] The name of your check run.
-        'Octo RuboCop',
+        'tomi Runner',
         # [String] The SHA of the commit to check
         # The payload structure differs depending on whether a check run or a check suite event occurred.
         @payload['check_run'].nil? ? @payload['check_suite']['head_sha'] : @payload['check_run']['head_sha'],

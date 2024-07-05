@@ -24,6 +24,8 @@ GEM
       faraday-net_http (>= 2.0, < 3.2)
     faraday-net_http (3.1.0)
       net-http
+    faraday-retry (2.2.1)
+      faraday (~> 2.0)
     git (2.1.1)
       activesupport (>= 5.0)
       addressable (~> 2.8)
@@ -97,6 +99,7 @@ PLATFORMS
 
 DEPENDENCIES
   dotenv
+  faraday-retry (~> 2.2)
   git
   jwt (~> 2.1)
   octokit (~> 4.0)
